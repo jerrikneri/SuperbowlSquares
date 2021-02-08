@@ -1,28 +1,36 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Squares />
+    <Settings />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { mapMutations } from 'vuex';
+import Squares from './components/Squares.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Squares,
+  },
+  mounted() {
+    this.setUp()
+  },
+  methods: {
+    ...mapMutations(['SET_TEAM']),
+    setUp() {
+      const home = process.env.VUE_APP_HOME;
+      const away = process.env.VUE_APP_AWAY;
+      this.SET_TEAM({ team: 'home', name: home });
+      this.SET_TEAM({ team: 'away', name: away });
+    }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+body {
+  padding: 10px 50px;
 }
 </style>

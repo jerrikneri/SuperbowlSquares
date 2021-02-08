@@ -3,6 +3,12 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+import VueRouter from 'vue-router'
+
+Vue.use(VueRouter)
+
+import routes from './routes.js';
+
 import App from './App.vue'
 
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
@@ -17,7 +23,27 @@ Vue.config.productionTip = false
 
 import store from './store';
 
+const router = new VueRouter({
+    mode: "history",
+    scrollBehavior(to, from, savedPosition) {
+        if (savedPosition) {
+            return savedPosition;
+        }
+        if (to.hash) {
+            return {
+                selector: to.hash
+            };
+        }
+        if (to.path === '/') {
+            return { x: 0, y: 0 };
+        }
+        return { x: 0, y: 150 };
+    },
+    routes
+});
+
 new Vue({
     render: h => h(App),
-    store
+    store,
+    router
 }).$mount('#app')

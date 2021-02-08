@@ -1,5 +1,12 @@
 <template>
-    <button @click="showSettings = true">Settings</button>
+    <div>
+        <h1 class="text-center">Settings</h1>
+
+        <section>
+            <h2>Players:</h2>
+            
+        </section>
+    </div>
 </template>
 
 <script>

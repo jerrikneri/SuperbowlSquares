@@ -1,19 +1,14 @@
 <template>
   <div id="app">
-    <Squares />
-    <Settings />
+    <router-view />
   </div>
 </template>
 
 <script>
 import { mapMutations } from 'vuex';
-import Squares from './components/Squares.vue'
 
 export default {
   name: 'App',
-  components: {
-    Squares,
-  },
   mounted() {
     this.setUp()
   },

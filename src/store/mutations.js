@@ -1,4 +1,11 @@
 export default {
+    ADD_PLAYER(state, player) {
+        state.players.push(player);
+    },
+    DELETE_PLAYER(state, playerId) {
+        const indexToDelete = state.players.findIndex(player => +player.id === playerId);
+        state.players.splice(indexToDelete, 1);
+    },
     SET_QUARTER(state, quarter) {
         state.currentQuarter = quarter;
     },
@@ -10,6 +17,9 @@ export default {
         }
 
         state.scores.push({ quarter, home, away });
+    },
+    SET_SETTINGS(state, { field, value }) {
+        state.settings[field] = value;
     },
     SET_TEAM(state, { team, name }) {
         state[team] = name;

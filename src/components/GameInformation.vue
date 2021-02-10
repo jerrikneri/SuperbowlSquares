@@ -40,6 +40,12 @@
         </p>
       </div>
     </section>
+
+
+    <b-modal id="playerIdPrompt" title="What is your player id? ###">
+      <input type="text" placeholder="Player ID ###">
+    </b-modal>
+
   </div>
 </template>
 
@@ -50,6 +56,7 @@ export default {
   name: 'GameInformation',
   data() {
     return {
+      currentPlayerId: 0,
       homeScore: 0,
       awayScore: 0,
       quarterLabels: [
@@ -73,7 +80,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(['currentQuarter', 'home', 'away', 'scores'])
+    ...mapState(['currentQuarter', 'home', 'away', 'scores', 'settings'])
+  },
+  mounted() {
+    this.setUp();
   },
   methods: {
     ...mapMutations(['SET_SCORE', 'SET_QUARTER']),
@@ -93,6 +103,12 @@ export default {
       this.SET_SCORE({ quarter: this.currentQuarter, home: this.homeScore, away: this.awayScore});
 
       this.clearInput();
+    },
+    setUp() {
+      if (this.settings.assignments && this.currentPlayerId === 0) {
+        console.log('Prompt  for user id to begin assignments');
+        this.$bvModal.show('playerIdPrompt')
+      }
     }
   },
   watch: {

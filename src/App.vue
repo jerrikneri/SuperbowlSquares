@@ -25,7 +25,10 @@ export default {
 </script>
 
 <style>
-body {
+#app {
   padding: 10px 50px;
+  background: black;
+  color: white;
+  
 }
 </style>

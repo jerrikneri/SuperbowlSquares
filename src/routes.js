@@ -1,5 +1,5 @@
 // import store from './store';
-import Settings from './components/Settings';
+import Settings from './components/Settings/index';
 import Squares from './components/Squares';
 
 export default [{

@@ -135,11 +135,8 @@ export default {
     display: grid;
     grid-gap: 10px;
     grid-template-columns: auto auto auto auto auto auto auto auto auto auto;
-    /* grid-template-rows: auto auto auto auto auto auto auto auto auto auto; */
-    /* grid-column: 10; */
-    grid-row-gap: 10px;
-    background-color: #fff;
     color: #444;
     flex-wrap: wrap;
+    overflow: scroll;
 }
 </style>

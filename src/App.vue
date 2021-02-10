@@ -1,7 +1,7 @@
 <template>
-  <div id="app">
-    <router-view />
-  </div>
+    <div class="app container-fluid">
+      <router-view class="row" />
+    </div>
 </template>
 
 <script>
@@ -25,10 +25,8 @@ export default {
 </script>
 
 <style>
-#app {
-  padding: 10px 50px;
+.app {
   background: black;
   color: white;
-  
 }
 </style>

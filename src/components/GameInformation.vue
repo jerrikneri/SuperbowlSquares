@@ -42,15 +42,21 @@
     </section>
 
 
-    <b-modal id="playerIdPrompt" title="What is your player id? ###">
-      <input type="text" placeholder="Player ID ###">
+    <b-modal id="playerIdPrompt"
+        title="What is your player id? ###"
+        @ok="handlePlayerSubmit"
+        ok-only
+        no-close-on-backdrop
+        no-close-on-esc
+        hide-header-close>
+      <input type="number" placeholder="Player ID ###" v-model="currentPlayerId">
     </b-modal>
 
   </div>
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex';
+import { mapGetters, mapMutations, mapState } from 'vuex';
 
 export default {
   name: 'GameInformation',
@@ -80,13 +86,17 @@ export default {
     }
   },
   computed: {
-    ...mapState(['currentQuarter', 'home', 'away', 'scores', 'settings'])
+    ...mapGetters(['playerIds']),
+    ...mapState(['currentQuarter', 'home', 'away', 'scores', 'settings']),
+    isAdmin() {
+      return this.currentPlayerId === process.env.VUE_APP_ADMIN_ID;
+    }
   },
   mounted() {
     this.setUp();
   },
   methods: {
-    ...mapMutations(['SET_SCORE', 'SET_QUARTER']),
+    ...mapMutations(['SET_SCORE', 'SET_QUARTER', 'SET_ASSIGNMENT']),
     clearInput() {
       this.homeScore = 0;
       this.awayScore = 0;
@@ -106,9 +116,37 @@ export default {
     },
     setUp() {
       if (this.settings.assignments && this.currentPlayerId === 0) {
-        console.log('Prompt  for user id to begin assignments');
         this.$bvModal.show('playerIdPrompt')
       }
+    },
+    handlePlayerSubmit(bvModalEvent) {
+      console.log(bvModalEvent)
+      bvModalEvent.preventDefault();
+      if (!this.playerIds.includes(+this.currentPlayerId)) {
+        return this.$nextTick(() => {
+          return this.$bvToast.toast('Invalid player ID', {
+            title: 'Invalid player ID',
+            solid: true,
+            variant: 'danger',
+            autoHideDelay: 10000,
+            noCloseButton: true
+          });
+        });
+      }
+
+      this.SET_ASSIGNMENT(true);
+
+      this.$nextTick(() => {
+        this.$bvToast.toast('Player assigned!', {
+          title: 'Begin picking your squares.',
+          solid: true,
+          variant: 'success',
+          autoHideDelay: 10000,
+          noCloseButton: true
+        });
+
+        this.$bvModal.hide('playerIdPrompt')
+      })
     }
   },
   watch: {

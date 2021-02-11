@@ -1,10 +1,9 @@
 <template>
   <div class="wrapper">
-      <button @click="allSquaresAssigned = !allSquaresAssigned">TEMP</button>
       <h1 class="text-center">Superbowl Squares</h1>
 
       <hr>
-      
+
       <h2 class="text-center">{{ away }} - X AXIS</h2>
       <h2 class="text-center">{{ home }} - Y AXIS</h2>
       <hr>
@@ -14,9 +13,9 @@
       <hr>
       <div class="squares-wrapper">
           <div v-for="squareX in digits" :key="`${squareX}-x`" class="squares-row">
-              <div class="label labelX" v-show="allSquaresAssigned"> {{ awayDigits[currentQuarter][squareX] }}</div>
+              <div class="label labelX" v-show="settings.numbers"> {{ awayDigits[currentQuarter][squareX] }}</div>
               <div v-for="squareY in digits" :key="`${squareY}-y`">
-                  <div v-if="squareX === 0" class="label labelY" v-show="allSquaresAssigned">
+                  <div v-if="squareX === 0" class="label labelY" v-show="settings.numbers">
                       {{ homeDigits[currentQuarter][squareY] }}
                     </div>
                   <Square :xPosition="squareX" :yPosition="squareY"
@@ -39,11 +38,10 @@ export default {
       return {
           length: 10,
           digits: [0,1,2,3,4,5,6,7,8,9],
-          allSquaresAssigned: false
       }
   },
   computed: {
-      ...mapState(['currentQuarter', 'home', 'away']),
+      ...mapState(['currentQuarter', 'home', 'away', 'settings']),
       awayDigits() {
           return {
               1: this.awayQuarterOne,

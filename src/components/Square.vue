@@ -41,7 +41,7 @@ export default {
         }
     },
     computed: {
-        ...mapState(['currentQuarter', 'scores']),
+        ...mapState(['currentQuarter', 'scores', 'readyForAssignment']),
         isWinner() {
             let currentScore = this.scores.find(score => +score.quarter === +this.currentQuarter);
             if (!currentScore) return false;
@@ -54,6 +54,15 @@ export default {
     },
     methods: {
         assign() {
+            if (!this.readyForAssignment) {
+                return this.$bvToast.toast("You've reached your maximum squares or player is not assigned.", {
+                    title: 'Squares not available',
+                    solid: true,
+                    variant: 'danger',
+                    autoHideDelay: 10000,
+                    noCloseButton: true
+                });
+            }
             alert(this.$props)
         },
         getLastDigit(number) {

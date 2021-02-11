@@ -6,6 +6,9 @@ export default {
         const indexToDelete = state.players.findIndex(player => +player.id === playerId);
         state.players.splice(indexToDelete, 1);
     },
+    SET_ASSIGNMENT(state, value) {
+        state.readyForAssignment = value;
+    },
     SET_QUARTER(state, quarter) {
         state.currentQuarter = quarter;
     },

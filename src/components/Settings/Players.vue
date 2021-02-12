@@ -14,13 +14,13 @@
             </thead>
             <tbody>
                 <tr v-for="player in players" :key="player.name">
-                    <th scope="row">{{ player.id }}</th>
+                    <th scope="row">{{ player.player_id }}</th>
                     <td>{{ player.name }}</td>
                     <td>{{ player.handle }}</td>
                     <td>{{ player.squares }}</td>
                     <td>{{ player.color }}</td>
                     <td>
-                        <button>Edit</button>
+                        <button @click="editPlayer(player.id)">Edit</button>
                         <button @click="deletePlayer(player.id)">Delete</button>
                     </td>
                 </tr>
@@ -45,11 +45,36 @@
             </label>
             <button @click="addPlayer">Add Player</button>
         </div>
+
+
+        <b-modal id="editPlayer"
+                title="Edit Player"
+                @ok="updatePlayerRequest(playerEdits)"
+                no-close-on-backdrop
+                no-close-on-esc
+                hide-header-close>
+            <label for="">
+                Player Name
+                <input type="text" v-model="playerEdits.name">
+            </label>
+            <label for="">
+                Player Handle
+                <input type="text" v-model="playerEdits.handle">
+            </label>
+            <label for="">
+                # of Squares
+                <input type="number" v-model="playerEdits.squares">
+            </label>
+            <label for="">
+                Color
+                <input type="text" v-model="playerEdits.color">
+            </label>
+        </b-modal>
     </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default {
     name: 'Players',
@@ -57,6 +82,14 @@ export default {
         return {
             newPlayer: {
                 id: 0,
+                name: '',
+                handle: '',
+                squares: 0,
+                color: ''
+            },
+            playerEdits: {
+                id: 0,
+                player_id: 0,
                 name: '',
                 handle: '',
                 squares: 0,
@@ -77,20 +110,35 @@ export default {
             )
         }
     },
+    async created() {
+        await this.fetchPlayers()
+    },
     methods: {
-        ...mapMutations(['ADD_PLAYER', 'DELETE_PLAYER']),
+        ...mapActions(['fetchPlayers', 'addPlayerRequest', 'updatePlayerRequest', 'deletePlayerRequest']),
         addPlayer() {
             if (!this.validPlayer) {
                 return;
             }
             this.generateUniqueId();
-            let newPlayerClone = { ...this.newPlayer };
-            this.ADD_PLAYER(newPlayerClone);
+            
+            this.addPlayerRequest(this.newPlayer);
+    
             this.clearInput();
+        },
+        editPlayer(id) {
+            const player = this.players.find(player => +player.id === +id);
+            this.playerEdits.id = player.id;
+            this.playerEdits.player_id = player.player_id;
+            this.playerEdits.name = player.name;
+            this.playerEdits.handle = player.handle;
+            this.playerEdits.color = player.color;
+            this.playerEdits.squares = player.squares;
+
+            this.$bvModal.show('editPlayer')
         },
         deletePlayer(id) {
             // TODO: confirm delete
-            this.DELETE_PLAYER(id);
+            this.deletePlayerRequest(id);
         },
         clearInput() {
             this.newPlayer.name = '';
@@ -103,12 +151,12 @@ export default {
         },
         generateUniqueId() {
             let idNumber = this.generateThreeDigitNumber();
-            let existingNumbers = this.players.map(player => player.id);
+            let existingNumbers = this.players.map(player => player.player_id);
             while (existingNumbers.includes(idNumber)) {
                 idNumber = this.generateThreeDigitNumber();
             }
 
-            this.newPlayer.id = idNumber;
+            this.newPlayer.player_id = idNumber;
         }
     }
 }

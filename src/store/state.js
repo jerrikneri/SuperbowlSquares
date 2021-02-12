@@ -4,21 +4,7 @@ export default {
     home: '',
     away: '',
     scores: [],
-    players: [{
-            id: 308,
-            name: 'Jerrik',
-            handle: 'jaewerek',
-            squares: 5,
-            color: 'black'
-        },
-        {
-            id: 210,
-            name: 'Jane',
-            handle: 'jajajaaane',
-            squares: 10,
-            color: 'purple'
-        },
-    ],
+    players: [],
     readyForAssignment: false,
     settings: {
         assignments: false,

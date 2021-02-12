@@ -23,6 +23,8 @@ Vue.config.productionTip = false
 
 import store from './store';
 
+import './axiosConfig.js';
+
 const router = new VueRouter({
     mode: "history",
     scrollBehavior(to, from, savedPosition) {

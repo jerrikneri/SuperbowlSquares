@@ -4,10 +4,6 @@
 
       <hr>
 
-      <h2 class="text-center">{{ away }} - X AXIS</h2>
-      <h2 class="text-center">{{ home }} - Y AXIS</h2>
-      <hr>
-
       <GameInformation />
 
       <hr>
@@ -27,7 +23,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import GameInformation from './GameInformation';
 import Square from './Square';
 
@@ -39,6 +35,9 @@ export default {
           length: 10,
           digits: [0,1,2,3,4,5,6,7,8,9],
       }
+  },
+  created() {
+    this.fetchSettings();
   },
   computed: {
       ...mapState(['currentQuarter', 'home', 'away', 'settings']),
@@ -100,6 +99,7 @@ export default {
       }
   },
   methods: {
+    ...mapActions(['fetchSettings']),
       generateRandomDigits() {
         let numbers = [];
         while(numbers.length < 10){

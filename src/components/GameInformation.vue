@@ -1,5 +1,9 @@
 <template>
-  <div class="game-information-wrapper text-center">
+  <div>
+    <div class="game-information-wrapper text-center" v-if="doneAssigning">
+    <h2 class="text-center">{{ away }} - X AXIS</h2>
+    <h2 class="text-center">{{ home }} - Y AXIS</h2>
+    <hr>
     <section>
       <h2>Quarter</h2>
       <div class="btn-group" role="group" aria-label="Basic example">
@@ -52,17 +56,23 @@
       <input type="number" placeholder="Player ID ###" v-model="currentPlayerId">
     </b-modal>
 
+    </div>
+
+    <div v-else>
+      You have {{ remainingSquares }} left.
+    </div>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex';
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 
 export default {
   name: 'GameInformation',
   data() {
     return {
       currentPlayerId: 0,
+      doneAssigning: false,
       homeScore: 0,
       awayScore: 0,
       quarterLabels: [
@@ -92,10 +102,15 @@ export default {
       return this.currentPlayerId === process.env.VUE_APP_ADMIN_ID;
     }
   },
-  mounted() {
+  async created() {
+    await Promise.all([
+      this.fetchPlayers(),
+      this.fetchSquares()
+    ]) 
     this.setUp();
   },
   methods: {
+    ...mapActions(['fetchPlayers', 'fetchSquares']),
     ...mapMutations(['SET_SCORE', 'SET_QUARTER', 'SET_ASSIGNMENT']),
     clearInput() {
       this.homeScore = 0;
@@ -120,7 +135,6 @@ export default {
       }
     },
     handlePlayerSubmit(bvModalEvent) {
-      console.log(bvModalEvent)
       bvModalEvent.preventDefault();
       if (!this.playerIds.includes(+this.currentPlayerId)) {
         return this.$nextTick(() => {

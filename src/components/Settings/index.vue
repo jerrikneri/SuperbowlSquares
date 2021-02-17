@@ -37,13 +37,13 @@
             <Players />
         </section>
 
-        <button> Save </button>
+        <button @click="save"> Save </button>
 
     </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex';
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 
 import Players from './Players';
 
@@ -54,13 +54,20 @@ export default {
         ...mapGetters(['availableSquares']),
         ...mapState(['settings']),
     },
+    created() {
+        this.fetchSettings();
+    },
     methods: {
+        ...mapActions(['fetchSettings', 'saveSettings']),
         ...mapMutations(['SET_SETTINGS']),
         setAssignment(value) {
             this.SET_SETTINGS({ field: 'assignments', value });
         },
         setNumbers(value) {
             this.SET_SETTINGS({ field: 'numbers', value });
+        },
+        save() {
+            this.saveSettings(this.settings);
         }
     }
 }

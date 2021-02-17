@@ -11,6 +11,8 @@ export default {
         const indexToDelete = state.players.findIndex(player => +player.id === playerId);
         state.players.splice(indexToDelete, 1);
     },
+
+
     SET_ASSIGNMENT(state, value) {
         state.readyForAssignment = value;
     },
@@ -29,8 +31,16 @@ export default {
 
         state.scores.push({ quarter, home, away });
     },
+
+    SET_SQUARES(state, squares) {
+        state.squareAssignments = squares;
+    },
+
     SET_SETTINGS(state, { field, value }) {
         state.settings[field] = value;
+    },
+    SET_ALL_SETTINGS(state, settings) {
+        state.settings = settings;
     },
     SET_TEAM(state, { team, name }) {
         state[team] = name;

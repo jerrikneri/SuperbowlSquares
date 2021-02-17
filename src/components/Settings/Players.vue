@@ -49,7 +49,7 @@
 
         <b-modal id="editPlayer"
                 title="Edit Player"
-                @ok="updatePlayerRequest(playerEdits)"
+                @ok="updatePlayer"
                 no-close-on-backdrop
                 no-close-on-esc
                 hide-header-close>
@@ -94,7 +94,8 @@ export default {
                 handle: '',
                 squares: 0,
                 color: ''
-            }
+            },
+            temporarilyUnclaimedSquares: 0
         }
     },
     computed: {
@@ -107,6 +108,15 @@ export default {
                 && this.newPlayer.color
                 && this.newPlayer.squares
                 && (this.availableSquares - this.newPlayer.squares >= 0)
+            )
+        },
+        validEditedPlayer() {
+            return !!(
+                this.playerEdits.name
+                && this.playerEdits.handle
+                && this.playerEdits.color
+                && this.playerEdits.squares
+                && (this.availableSquares + this.temporarilyUnclaimedSquares - this.playerEdits.squares >= 0)
             )
         }
     },
@@ -134,7 +144,16 @@ export default {
             this.playerEdits.color = player.color;
             this.playerEdits.squares = player.squares;
 
+            this.temporarilyUnclaimedSquares = player.squares;
+
             this.$bvModal.show('editPlayer')
+        },
+        updatePlayer() {
+            if (!this.validEditedPlayer) {
+                return;
+            }
+
+            this.updatePlayerRequest(this.playerEdits);
         },
         deletePlayer(id) {
             // TODO: confirm delete

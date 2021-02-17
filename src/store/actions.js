@@ -3,7 +3,6 @@ import axios from 'axios';
 export default {  
     async fetchPlayers({ commit }) {
         const { data } = await axios.get('players');
-        console.log('data', data);
 
         commit('SET_PLAYERS', data);
     },
@@ -21,5 +20,25 @@ export default {
         const { data } = await axios.delete(`players/${playerId}`);
 
         commit('DELETE_PLAYER', data);
+    },
+
+
+    async fetchSquares({ commit }) {
+        const { data } = await axios.get('squares');
+
+        commit('SET_SQUARES', data);
+    },
+
+
+
+    async fetchSettings({ commit }) {
+        const { data } = await axios.get('settings');
+
+        commit('SET_ALL_SETTINGS', data);
+    },
+    async saveSettings({ commit }, settings) {
+        const { data } = await axios.post('settings', settings);
+
+        commit('SET_ALL_SETTINGS', data);
     }
 };

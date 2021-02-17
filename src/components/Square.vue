@@ -1,20 +1,14 @@
 <template>
-    <div class="square cursor"
-        :class="{ 'winner': isWinner }"
+    <div class="square"
+        :class="{ 'winner': isWinner, 'cursor': !assignedPlayer }"
+        :style="`background: ${assignedPlayer && assignedPlayer.color || ''} `"
         @click="assign">
-        <h1>{{ assignedName || 'AVAILABLE' }}</h1>
-        <p>
-            Pos: ({{ xPosition }}, {{ yPosition }})
-        </p>
-        <p>
-            Home: {{ homeScore }}
-            Away: {{ awayScore }}
-        </p>
+        <h1>{{ assignedPlayer && assignedPlayer.handle || 'AVAILABLE' }}</h1>
     </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 export default {
     name: 'Square',
@@ -41,7 +35,8 @@ export default {
         }
     },
     computed: {
-        ...mapState(['currentQuarter', 'scores', 'readyForAssignment']),
+        ...mapGetters(['squareAssignment']),
+        ...mapState(['currentQuarter', 'scores', 'readyForAssignment', 'players']),
         isWinner() {
             let currentScore = this.scores.find(score => +score.quarter === +this.currentQuarter);
             if (!currentScore) return false;
@@ -50,10 +45,22 @@ export default {
             home = this.getLastDigit(home);
 
             return (+away === +this.awayScore) && (+home === +this.homeScore);
+        },
+        assignedPlayer() {
+            let assignment = this.squareAssignment({ x: this.xPosition, y: this.yPosition});
+
+            let player = this.players.length && this.players.find(player => player.player_id === assignment.player_id);
+
+            return player || null;
         }
+
     },
     methods: {
         assign() {
+            if (this.assignedPlayer) {
+                return;
+            }
+
             if (!this.readyForAssignment) {
                 return this.$bvToast.toast("You've reached your maximum squares or player is not assigned.", {
                     title: 'Squares not available',

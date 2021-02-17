@@ -6,8 +6,6 @@ export default {
     scores: [],
     players: [],
     readyForAssignment: false,
-    settings: {
-        assignments: false,
-        numbers: false
-    }
+    squareAssignments: [],
+    settings: {}
 };

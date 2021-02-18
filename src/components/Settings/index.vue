@@ -1,6 +1,7 @@
 <template>
     <div class="settings-wrapper">
         <button @click="$router.push({ name: 'Squares' })">Back to board</button>
+        <button @click="resetSquares">Reset All Squares</button>
         <h1 class="text-center">Settings</h1>
 
         <section v-show="!availableSquares">
@@ -15,6 +16,9 @@
                         :checked="settings.assignments ? null: true"> Off
                 </label>
             </div>
+
+            <h3>Scores</h3>
+            <button class="btn btn-primary" @click="generateScores">Generate</button>
         </section>
 
         <!-- Check all squares assigned -->
@@ -55,10 +59,11 @@ export default {
         ...mapState(['settings']),
     },
     created() {
+        this.fetchScores();
         this.fetchSettings();
     },
     methods: {
-        ...mapActions(['fetchSettings', 'saveSettings']),
+        ...mapActions(['fetchSettings', 'fetchScores', 'saveSettings', 'resetSquares']),
         ...mapMutations(['SET_SETTINGS']),
         setAssignment(value) {
             this.SET_SETTINGS({ field: 'assignments', value });
@@ -68,7 +73,8 @@ export default {
         },
         save() {
             this.saveSettings(this.settings);
-        }
+        },
+        generateScores() {}
     }
 }
 </script>

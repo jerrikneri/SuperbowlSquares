@@ -1,5 +1,6 @@
 export default {
     squares: 100,
+    currentPlayer: {},
     currentQuarter: 1,
     home: '',
     away: '',
@@ -7,5 +8,6 @@ export default {
     players: [],
     readyForAssignment: false,
     squareAssignments: [],
+    pickedSquares: [],
     settings: {}
 };

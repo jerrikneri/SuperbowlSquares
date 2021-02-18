@@ -44,7 +44,13 @@
         </p>
       </div>
     </section>
+    </div>
 
+    <div v-else>
+      {{ currentPlayer && currentPlayer.name }}, you have {{ remainingPlayerSquares }} left.
+
+      <button v-if="!remainingPlayerSquares" @click="confirmSquares">Confirm Squares</button>
+    </div>
 
     <b-modal id="playerIdPrompt"
         title="What is your player id? ###"
@@ -55,12 +61,6 @@
         hide-header-close>
       <input type="number" placeholder="Player ID ###" v-model="currentPlayerId">
     </b-modal>
-
-    </div>
-
-    <div v-else>
-      You have {{ remainingSquares }} left.
-    </div>
   </div>
 </template>
 
@@ -96,22 +96,25 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['playerIds']),
-    ...mapState(['currentQuarter', 'home', 'away', 'scores', 'settings']),
+    ...mapGetters(['playerIds', 'remainingPlayerSquares']),
+    ...mapState(['players', 'currentPlayer', 'currentQuarter', 'home', 'away', 'scores', 'settings', 'pickedSquares']),
     isAdmin() {
       return this.currentPlayerId === process.env.VUE_APP_ADMIN_ID;
-    }
+    },
+    
   },
   async created() {
     await Promise.all([
       this.fetchPlayers(),
-      this.fetchSquares()
+      this.fetchScores(),
+      this.fetchSquares(),
+      this.fetchSettings()
     ]) 
     this.setUp();
   },
   methods: {
-    ...mapActions(['fetchPlayers', 'fetchSquares']),
-    ...mapMutations(['SET_SCORE', 'SET_QUARTER', 'SET_ASSIGNMENT']),
+    ...mapActions(['fetchPlayers', 'fetchSquares', 'fetchSettings', 'fetchScores', 'submitSquareRequest']),
+    ...mapMutations(['SET_SCORE', 'SET_QUARTER', 'TOGGLE_ACTIVELY_PICKING', 'SET_CURRENT_ACTIVE_PLAYER']),
     clearInput() {
       this.homeScore = 0;
       this.awayScore = 0;
@@ -132,6 +135,8 @@ export default {
     setUp() {
       if (this.settings.assignments && this.currentPlayerId === 0) {
         this.$bvModal.show('playerIdPrompt')
+      } else {
+        this.doneAssigning = true;
       }
     },
     handlePlayerSubmit(bvModalEvent) {
@@ -148,8 +153,6 @@ export default {
         });
       }
 
-      this.SET_ASSIGNMENT(true);
-
       this.$nextTick(() => {
         this.$bvToast.toast('Player assigned!', {
           title: 'Begin picking your squares.',
@@ -159,8 +162,28 @@ export default {
           noCloseButton: true
         });
 
+        this.TOGGLE_ACTIVELY_PICKING();
+        this.SET_CURRENT_ACTIVE_PLAYER(
+          this.players.find(player => +player.player_id === +this.currentPlayerId)
+        );
+
+        if (!+this.availableSquares) {
+          this.$bvToast.toast('You do not have any squares left to assign!', {
+            title: 'You do not have any squares left to assign!',
+            solid: true,
+            variant: 'danger',
+            autoHideDelay: 10000,
+            noCloseButton: true
+          });
+        }
+
         this.$bvModal.hide('playerIdPrompt')
       })
+    },
+    async confirmSquares() {
+      // Are you sure?
+      await this.submitSquareRequest({ squares: this.pickedSquares, player_id: this.currentPlayer.player_id });
+      location.reload();
     }
   },
   watch: {

@@ -13,9 +13,6 @@ export default {
     },
 
 
-    SET_ASSIGNMENT(state, value) {
-        state.readyForAssignment = value;
-    },
     SET_QUARTER(state, quarter) {
         state.currentQuarter = quarter;
     },
@@ -44,5 +41,24 @@ export default {
     },
     SET_TEAM(state, { team, name }) {
         state[team] = name;
+    },
+
+    SET_CURRENT_ACTIVE_PLAYER(state, player) {
+        state.currentPlayer = player
+    },
+
+
+    TOGGLE_ACTIVELY_PICKING(state) {
+        state.readyForAssignment = !state.readyForAssignment;
+    },
+
+    TOGGLE_PICKED_SQUARE(state, square) {
+        let existingSquareIndex = state.pickedSquares.findIndex(pickedSquare => pickedSquare.x === square.x && pickedSquare.y === square.y);
+
+        if (existingSquareIndex !== -1) {
+            return state.pickedSquares.splice(existingSquareIndex, 1);
+        }
+
+        state.pickedSquares.push(square);
     }
 };

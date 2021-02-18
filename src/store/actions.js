@@ -22,9 +22,34 @@ export default {
         commit('DELETE_PLAYER', data);
     },
 
+    async fetchScores({ commit }) {
+        const { data } = await axios.get('scores');
+
+        commit('SET_SCORES', data);
+    },
+    async setScores({ commit }, scores) {
+        const { data } = await axios.post('scores', scores);
+
+        commit('SET_SCORES', data);
+    },
+
+
+    async submitSquareRequest({ commit }, { squares, player_id }) {
+        const { data } = await axios.patch('squares', { squares, player_id });
+
+        console.log('data', data);
+        commit('SET_SQUARES', data);
+    },
+
 
     async fetchSquares({ commit }) {
         const { data } = await axios.get('squares');
+
+        commit('SET_SQUARES', data);
+    },
+
+    async resetSquares({ commit }) {
+        const { data } = await axios.post('squares/reset');
 
         commit('SET_SQUARES', data);
     },

@@ -1,14 +1,14 @@
 <template>
     <div class="square"
         :class="{ 'winner': isWinner, 'cursor': !assignedPlayer }"
-        :style="`background: ${assignedPlayer && assignedPlayer.color || ''} `"
+        :style="getBackground"
         @click="assign">
-        <h1>{{ assignedPlayer && assignedPlayer.handle || 'AVAILABLE' }}</h1>
+        <h1>{{ label }}</h1>
     </div>
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapGetters, mapMutations, mapState } from 'vuex';
 
 export default {
     name: 'Square',
@@ -34,8 +34,13 @@ export default {
             default: () => {}
         }
     },
+    data() {
+        return {
+            selected: false
+        }
+    },
     computed: {
-        ...mapGetters(['squareAssignment']),
+        ...mapGetters(['squareAssignment', 'remainingPlayerSquares']),
         ...mapState(['currentQuarter', 'scores', 'readyForAssignment', 'players']),
         isWinner() {
             let currentScore = this.scores.find(score => +score.quarter === +this.currentQuarter);
@@ -52,10 +57,20 @@ export default {
             let player = this.players.length && this.players.find(player => player.player_id === assignment.player_id);
 
             return player || null;
+        },
+        label() {
+            return this.selected ? 'SELECTED' 
+                            : (this.assignedPlayer && this.assignedPlayer.handle || 'AVAILABLE')
+        },
+        getBackground() {
+            return {
+                background: this.selected ? 'yellow' : (this.assignedPlayer && this.assignedPlayer.color || '')
+                }
         }
 
     },
     methods: {
+        ...mapMutations(['TOGGLE_PICKED_SQUARE']),
         assign() {
             if (this.assignedPlayer) {
                 return;
@@ -70,7 +85,19 @@ export default {
                     noCloseButton: true
                 });
             }
-            alert(this.$props)
+            if (!this.selected && this.remainingPlayerSquares === 0) {
+                return this.$bvToast.toast("You've reached your maximum squares.", {
+                    title: 'Squares not available',
+                    solid: true,
+                    variant: 'danger',
+                    autoHideDelay: 10000,
+                    noCloseButton: true
+                });
+            }
+
+            this.selected = !this.selected;
+
+            this.TOGGLE_PICKED_SQUARE({ x: this.xPosition, y: this.yPosition });
         },
         getLastDigit(number) {
             return Number.isInteger(number)

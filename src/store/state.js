@@ -1,4 +1,6 @@
 export default {
+    awayDigits: [],
+    homeDigits: [],
     squares: 100,
     currentPlayer: {},
     currentQuarter: 1,

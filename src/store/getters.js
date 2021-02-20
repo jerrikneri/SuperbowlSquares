@@ -23,5 +23,25 @@ export default {
         return activePlayer.squares - state.pickedSquares.length - alreadyAssignedSquares;
     },
 
-    squareAssignment: (state) => ({ x, y }) => state.squareAssignments.length && state.squareAssignments.find(square => square.x === x && square.y === y)
+    squareAssignment: (state) => ({ x, y }) => state.squareAssignments.length && state.squareAssignments.find(square => square.x === x && square.y === y),
+    
+    allSquaresAssigned: (state) => state.squareAssignments.filter(square => !square.player_id).length === 0,
+
+    homeDigits: (state) => {
+        return {
+            1: state.homeDigits.first_quarter,
+            2: state.homeDigits.second_quarter,
+            3: state.homeDigits.third_quarter,
+            4: state.homeDigits.fourth_quarter
+        }
+    },
+
+    awayDigits: (state) => {
+        return {
+            1: state.awayDigits.first_quarter,
+            2: state.awayDigits.second_quarter,
+            3: state.awayDigits.third_quarter,
+            4: state.awayDigits.fourth_quarter
+        }
+    }
 };

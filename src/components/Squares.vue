@@ -7,7 +7,7 @@
       <GameInformation />
 
       <hr>
-      <div class="squares-wrapper">
+      <div class="squares-wrapper" v-if="awayDigits && homeDigits">
           <div v-for="squareX in digits" :key="`${squareX}-x`" class="squares-row">
               <div class="label labelX" v-show="settings.numbers"> {{ awayDigits[currentQuarter][squareX] }}</div>
               <div v-for="squareY in digits" :key="`${squareY}-y`">
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import GameInformation from './GameInformation';
 import Square from './Square';
 
@@ -32,79 +32,12 @@ export default {
   components: { GameInformation, Square },
   data() {
       return {
-          length: 10,
           digits: [0,1,2,3,4,5,6,7,8,9],
       }
   },
   computed: {
-      ...mapState(['currentQuarter', 'home', 'away', 'settings']),
-      awayDigits() {
-          return {
-              1: this.awayQuarterOne,
-              2: this.awayQuarterTwo,
-              3: this.awayQuarterThree,
-              4: this.awayQuarterFour,
-          }
-      },
-      awayQuarterOne() {
-        let awayQuarterOneDigits = this.generateRandomDigits();
-
-        return awayQuarterOneDigits;
-      },
-      awayQuarterTwo() {
-        let awayQuarterTwoDigits = this.generateRandomDigits();
-
-        return awayQuarterTwoDigits;
-      },
-      awayQuarterThree() {
-        let awayQuarterThreeDigits = this.generateRandomDigits();
-
-        return awayQuarterThreeDigits;
-      },
-      awayQuarterFour() {
-        let awayQuarterFourDigits = this.generateRandomDigits();
-
-        return awayQuarterFourDigits;
-      },
-      homeDigits() {
-          return {
-              1: this.homeQuarterOne,
-              2: this.homeQuarterTwo,
-              3: this.homeQuarterThree,
-              4: this.homeQuarterFour,
-          }
-      },
-      homeQuarterOne() {
-        let homeQuarterOneDigits = this.generateRandomDigits();
-
-        return homeQuarterOneDigits;
-      },
-      homeQuarterTwo() {
-        let homeQuarterTwoDigits = this.generateRandomDigits();
-        
-        return homeQuarterTwoDigits;
-      },
-      homeQuarterThree() {
-        let homeQuarterThreeDigits = this.generateRandomDigits();
-        
-        return homeQuarterThreeDigits;
-      },
-      homeQuarterFour() {
-        let homeQuarterFourDigits = this.generateRandomDigits();
-        
-        return homeQuarterFourDigits;
-      }
-  },
-  methods: {
-      generateRandomDigits() {
-        let numbers = [];
-        while(numbers.length < 10){
-            var randomNumber = Math.floor(Math.random() * this.length);
-            if (numbers.indexOf(randomNumber) === -1) numbers.push(randomNumber);
-        }
-
-        return numbers;
-      }
+    ...mapGetters(['awayDigits', 'homeDigits']),
+    ...mapState(['currentQuarter', 'home', 'away', 'settings']),
   }
 }
 </script>

@@ -7,12 +7,12 @@
         <section v-show="!availableSquares">
             <h3>Allow Assignments</h3>
             <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-secondary active">
-                    <input type="radio" name="options" id="assignments_on" autocomplete="off" @click="setAssignment(true)"
+                <label class="btn btn-secondary ">
+                    <input type="radio" name="assignments" id="assignments_on" autocomplete="off" @click="setAssignment(true)"
                         :checked="settings.assignments ? true : null"> On
                 </label>
                 <label class="btn btn-secondary">
-                    <input type="radio" name="options" id="assignments_off" autocomplete="off" @click="setAssignment(false)"
+                    <input type="radio" name="assignments" id="assignments_off" autocomplete="off" @click="setAssignment(false)"
                         :checked="settings.assignments ? null: true"> Off
                 </label>
             </div>
@@ -22,15 +22,15 @@
         </section>
 
         <!-- Check all squares assigned -->
-        <section v-show="false">
+        <section v-show="allSquaresAssigned">
             <h3>Show Numbers</h3>
-            <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-secondary active">
-                    <input type="radio" name="options" id="assignments_on" autocomplete="off" @click="setNumbers(true)"
+            <div class="btn-group btn-group-toggle" data-toggle="buttons2">
+                <label class="btn btn-secondary ">
+                    <input type="radio" name="numbers" id="numbers_on" autocomplete="off" @click="setNumbers(true)"
                         :checked="settings.numbers ? true : null"> On
                 </label>
                 <label class="btn btn-secondary">
-                    <input type="radio" name="options" id="assignments_off" autocomplete="off" @click="setNumbers(false)"
+                    <input type="radio" name="numbers" id="numbers_off" autocomplete="off" @click="setNumbers(false)"
                         :checked="settings.numbers ? null: true"> Off
                 </label>
             </div>
@@ -55,15 +55,16 @@ export default {
     name: 'Settings',
     components: { Players },
     computed: {
-        ...mapGetters(['availableSquares']),
+        ...mapGetters(['availableSquares', 'allSquaresAssigned']),
         ...mapState(['settings']),
     },
     created() {
         this.fetchScores();
         this.fetchSettings();
+        this.fetchSquares()
     },
     methods: {
-        ...mapActions(['fetchSettings', 'fetchScores', 'saveSettings', 'resetSquares']),
+        ...mapActions(['fetchSettings', 'fetchScores', 'fetchSquares', 'saveSettings', 'setScores', 'resetSquares']),
         ...mapMutations(['SET_SETTINGS']),
         setAssignment(value) {
             this.SET_SETTINGS({ field: 'assignments', value });
@@ -74,7 +75,36 @@ export default {
         save() {
             this.saveSettings(this.settings);
         },
-        generateScores() {}
+        generateScores() {
+            const home = this.generateHomeScores();
+            const away = this.generateAwayScores();
+            this.setScores({ home, away });
+        },
+        generateHomeScores() {
+            return {
+                first_quarter: this.generateRandomDigits(),
+                second_quarter: this.generateRandomDigits(),
+                third_quarter: this.generateRandomDigits(),
+                fourth_quarter: this.generateRandomDigits(),
+            }
+        },
+        generateAwayScores() {
+            return {
+                first_quarter: this.generateRandomDigits(),
+                second_quarter: this.generateRandomDigits(),
+                third_quarter: this.generateRandomDigits(),
+                fourth_quarter: this.generateRandomDigits(),
+            }
+        },
+        generateRandomDigits() {
+            let numbers = [];
+            while(numbers.length < 10){
+                var randomNumber = Math.floor(Math.random() * 10);
+                if (numbers.indexOf(randomNumber) === -1) numbers.push(randomNumber);
+            }
+
+            return numbers;
+        }
     }
 }
 </script>

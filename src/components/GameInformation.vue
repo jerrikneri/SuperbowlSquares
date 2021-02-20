@@ -59,7 +59,10 @@
         no-close-on-backdrop
         no-close-on-esc
         hide-header-close>
-      <input type="number" placeholder="Player ID ###" v-model="currentPlayerId">
+      <input type="number"
+        placeholder="Player ID ###"
+        v-model="currentPlayerId"
+        @keydown.enter="handlePlayerSubmit">
     </b-modal>
   </div>
 </template>

@@ -29,6 +29,11 @@ export default {
         state.scores.push({ quarter, home, away });
     },
 
+    SET_SCORES(state, { home, away }) {
+        state.homeDigits = home;
+        state.awayDigits = away;
+    },
+
     SET_SQUARES(state, squares) {
         state.squareAssignments = squares;
     },

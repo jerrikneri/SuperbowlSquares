@@ -4,6 +4,7 @@
             <v-row>
                 <v-card class="pa-5 my-5" dark>
                     <v-btn @click="$router.push({ name: 'Squares' })"
+                        color="secondary"
                         light
                         block
                         class="ml-auto">Back to board</v-btn>
@@ -44,7 +45,8 @@
                     <v-card-title>
                         Scores
 
-                        <v-btn class="btn btn-primary ml-auto"
+                        <v-btn class="ml-auto"
+                            color="primary"
                             @click="generateScores">Generate</v-btn>
                     </v-card-title>
                     
@@ -54,8 +56,9 @@
                     <v-card-title>
                         Squares
 
-                        <v-btn class="btn btn-primary ml-auto"
-                            @ @click="resetSquares">Reset All Squares</v-btn>
+                        <v-btn class="ml-auto"
+                            color="primary"
+                            @click="resetSquares">Reset All Squares</v-btn>
                     </v-card-title>
                 </v-card>
 
@@ -101,7 +104,7 @@
                 </v-card>
 
                 <v-card class="pa-5 mb-5" dark>
-                    <v-btn light block @click="save"> Save </v-btn>
+                    <v-btn color="primary" light block @click="save"> Save </v-btn>
                 </v-card>
             </v-row>
 

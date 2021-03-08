@@ -1,152 +1,213 @@
 <template>
     <div>
-        <h2>Available Squares: {{ availableSquares }}</h2>
-        <table class="players">
-            <thead>
-                <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Handle</th>
-                <th scope="col"># of Squares</th>
-                <th scope="col">Color</th>
-                <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="player in players" :key="player.name">
-                    <th scope="row">{{ player.player_id }}</th>
-                    <td>{{ player.name }}</td>
-                    <td>{{ player.handle }}</td>
-                    <td>{{ player.squares }}</td>
-                    <td>{{ player.color }}</td>
-                    <td>
-                        <button @click="editPlayer(player.id)">Edit</button>
-                        <button @click="deletePlayer(player.id)">Delete</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div v-show="availableSquares">
-            <label for="">
-                Player Name
-                <input type="text" v-model="newPlayer.name">
-            </label>
-            <label for="">
-                Player Handle
-                <input type="text" v-model="newPlayer.handle">
-            </label>
-            <label for="">
-                # of Squares
-                <input type="number" v-model="newPlayer.squares">
-            </label>
-            <label for="">
-                Color
-                <input type="text" v-model="newPlayer.color">
-            </label>
-            <button @click="addPlayer">Add Player</button>
-        </div>
+        <v-data-table :headers="headers"
+                      :items="players"
+                      hide-default-footer>
+            <template v-slot:top>
+                <v-toolbar
+                    flat
+                >
+                    <v-toolbar-title>
+                        Available Squares: {{ availableSquares }}
+                    </v-toolbar-title>
+                    <v-divider
+                    class="mx-4"
+                    inset
+                    vertical
+                    ></v-divider>
+                    <v-spacer></v-spacer>
+                    <v-dialog
+                        v-model="dialog"
+                        max-width="500px"
+                        dark
+                    >
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                            color="primary"
+                            dark
+                            class="mb-2"
+                            v-bind="attrs"
+                            v-on="on"
+                            v-show="availableSquares"
+                        >
+                        Add Player
+                        </v-btn>
+                    </template>
+                    <v-card>
+                        <v-card-title>
+                        <!-- <span class="headline">{{ formTitle }}</span> -->
+                        </v-card-title>
 
+                        <v-card-text>
+                        <v-container>
+                            <v-row>
+                                <v-col
+                                    cols="12"
+                                    sm="6"
+                                    md="4"
+                                >
+                                    <v-text-field
+                                    v-model="playerEdits.name"
+                                    label="Player name"
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col
+                                    cols="12"
+                                    sm="6"
+                                    md="4"
+                                >
+                                    <v-text-field
+                                    v-model="playerEdits.handle"
+                                    label="Handle"
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col
+                                    cols="12"
+                                    sm="6"
+                                    md="4"
+                                >
+                                    <v-text-field
+                                    v-model="playerEdits.color"
+                                    label="Color"
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col
+                                    cols="12"
+                                    sm="6"
+                                    md="4"
+                                >
+                                    <v-text-field
+                                    v-model="playerEdits.squares"
+                                    label="# of Squares"
+                                    ></v-text-field>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                        </v-card-text>
 
-        <b-modal id="editPlayer"
-                title="Edit Player"
-                @ok="updatePlayer"
-                no-close-on-backdrop
-                no-close-on-esc
-                hide-header-close>
-            <label for="">
-                Player Name
-                <input type="text" v-model="playerEdits.name">
-            </label>
-            <label for="">
-                Player Handle
-                <input type="text" v-model="playerEdits.handle">
-            </label>
-            <label for="">
-                # of Squares
-                <input type="number" v-model="playerEdits.squares">
-            </label>
-            <label for="">
-                Color
-                <input type="text" v-model="playerEdits.color">
-            </label>
-        </b-modal>
+                        <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="close"
+                        >
+                            Cancel
+                        </v-btn>
+                        <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="save"
+                        >
+                            Save
+                        </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                    </v-dialog>
+                    <v-dialog v-model="dialogDelete" max-width="500px">
+                    <v-card>
+                        <v-card-title class="headline">Are you sure you want to delete this item?</v-card-title>
+                        <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
+                        <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+                        <v-spacer></v-spacer>
+                        </v-card-actions>
+                    </v-card>
+                    </v-dialog>
+                </v-toolbar>
+            </template>
+            <template v-slot:item.actions="{ item }">
+                <v-icon small
+                        class="mr-2"
+                        @click="editItem(item)">
+                    mdi-pencil
+                </v-icon>
+                <v-icon small
+                        @click="deleteItem(item)">
+                    mdi-delete
+                </v-icon>
+            </template>
+        </v-data-table>
     </div>
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from "vuex";
 
 export default {
-    name: 'Players',
+    name: "Players",
     data() {
         return {
-            newPlayer: {
-                id: 0,
-                name: '',
-                handle: '',
-                squares: 0,
-                color: ''
-            },
+            dialog: false,
+            dialogDelete: false,
+            headers: [
+                { text: "#", value: "player_id" },
+                { text: "Name", value: "name" },
+                { text: "Handle", value: "handle" },
+                { text: "# of Squares", value: "squares" },
+                { text: "Color", value: "color" },
+                { text: "Actions", value: "actions" },
+            ],
             playerEdits: {
                 id: 0,
                 player_id: 0,
-                name: '',
-                handle: '',
+                name: "",
+                handle: "",
                 squares: 0,
-                color: ''
+                color: "",
             },
-            temporarilyUnclaimedSquares: 0
-        }
+            temporarilyUnclaimedSquares: 0,
+        };
     },
     computed: {
-        ...mapGetters(['availableSquares', 'takenSquares']),
-        ...mapState(['players']),
+        ...mapGetters(["availableSquares", "takenSquares"]),
+        ...mapState(["players"]),
         validPlayer() {
             return !!(
-                this.newPlayer.name
-                && this.newPlayer.handle
-                && this.newPlayer.color
-                && this.newPlayer.squares
-                && (this.availableSquares - this.newPlayer.squares >= 0)
-            )
+                this.newPlayer.name &&
+                this.newPlayer.handle &&
+                this.newPlayer.color &&
+                this.newPlayer.squares &&
+                this.availableSquares - this.newPlayer.squares >= 0
+            );
         },
         validEditedPlayer() {
             return !!(
-                this.playerEdits.name
-                && this.playerEdits.handle
-                && this.playerEdits.color
-                && this.playerEdits.squares
-                && (this.availableSquares + this.temporarilyUnclaimedSquares - this.playerEdits.squares >= 0)
-            )
-        }
+                this.playerEdits.name &&
+                this.playerEdits.handle &&
+                this.playerEdits.color &&
+                this.playerEdits.squares &&
+                this.availableSquares +
+                    this.temporarilyUnclaimedSquares -
+                    this.playerEdits.squares >=
+                    0
+            );
+        },
     },
     async created() {
-        await this.fetchPlayers()
+        await this.fetchPlayers();
     },
     methods: {
-        ...mapActions(['fetchPlayers', 'addPlayerRequest', 'updatePlayerRequest', 'deletePlayerRequest']),
+        ...mapActions([
+            "fetchPlayers",
+            "addPlayerRequest",
+            "updatePlayerRequest",
+            "deletePlayerRequest",
+        ]),
         addPlayer() {
             if (!this.validPlayer) {
                 return;
             }
             this.generateUniqueId();
-            
+
             this.addPlayerRequest(this.newPlayer);
-    
+
             this.clearInput();
         },
-        editPlayer(id) {
-            const player = this.players.find(player => +player.id === +id);
-            this.playerEdits.id = player.id;
-            this.playerEdits.player_id = player.player_id;
-            this.playerEdits.name = player.name;
-            this.playerEdits.handle = player.handle;
-            this.playerEdits.color = player.color;
-            this.playerEdits.squares = player.squares;
-
-            this.temporarilyUnclaimedSquares = player.squares;
-
-            this.$bvModal.show('editPlayer')
+        save() {
+            console.log('save');
+            this.updatePlayer();
         },
         updatePlayer() {
             if (!this.validEditedPlayer) {
@@ -154,31 +215,67 @@ export default {
             }
 
             this.updatePlayerRequest(this.playerEdits);
+
+            this.dialog = false;
         },
         deletePlayer(id) {
             // TODO: confirm delete
             this.deletePlayerRequest(id);
         },
         clearInput() {
-            this.newPlayer.name = '';
-            this.newPlayer.handle = '';
-            this.newPlayer.color = '';
+            this.newPlayer.name = "";
+            this.newPlayer.handle = "";
+            this.newPlayer.color = "";
             this.newPlayer.squares = 0;
         },
         generateThreeDigitNumber() {
-            return Math.floor(Math.random()*(999+1))
+            return Math.floor(Math.random() * (999 + 1));
         },
         generateUniqueId() {
             let idNumber = this.generateThreeDigitNumber();
-            let existingNumbers = this.players.map(player => player.player_id);
+            let existingNumbers = this.players.map(
+                (player) => player.player_id
+            );
             while (existingNumbers.includes(idNumber)) {
                 idNumber = this.generateThreeDigitNumber();
             }
 
             this.newPlayer.player_id = idNumber;
-        }
-    }
-}
+        },
+
+        editItem (item) {
+            this.editedIndex = this.players.indexOf(item)
+            this.playerEdits = Object.assign({}, item)
+            this.dialog = true
+        },
+        deleteItem(item) {
+            this.editedIndex = this.players.indexOf(item);
+            this.playerEdits = Object.assign({}, item);
+            this.dialogDelete = true;
+        },
+
+        deleteItemConfirm() {
+            this.players.splice(this.editedIndex, 1);
+            this.closeDelete();
+        },
+
+        close() {
+            this.dialog = false;
+            this.$nextTick(() => {
+                this.playerEdits = Object.assign({}, this.defaultItem);
+                this.editedIndex = -1;
+            });
+        },
+
+        closeDelete() {
+            this.dialogDelete = false;
+            this.$nextTick(() => {
+                this.playerEdits = Object.assign({}, this.defaultItem);
+                this.editedIndex = -1;
+            });
+        },
+    },
+};
 </script>
 
 <style scoped>

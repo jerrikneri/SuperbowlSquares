@@ -24,6 +24,7 @@ Vue.config.productionTip = false
 import store from './store';
 
 import './axiosConfig.js';
+import vuetify from './plugins/vuetify';
 
 const router = new VueRouter({
     mode: "history",
@@ -47,5 +48,6 @@ const router = new VueRouter({
 new Vue({
     render: h => h(App),
     store,
+    vuetify,
     router
 }).$mount('#app')

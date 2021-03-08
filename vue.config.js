@@ -1,5 +1,6 @@
 module.exports = {
     runtimeCompiler: true,
+
     devServer: {
         port: 8090,
         host: 'squares.test',
@@ -22,5 +23,9 @@ module.exports = {
         //         logLevel: 'debug' 
         //     },
         // }
-    }
+    },
+
+    transpileDependencies: [
+      'vuetify'
+    ]
 };

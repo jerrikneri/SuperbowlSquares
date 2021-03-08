@@ -1,7 +1,9 @@
 <template>
-    <div class="app container-fluid">
-      <router-view class="row" />
-    </div>
+<v-app>
+  <v-main>
+    <router-view class="row" />
+  </v-main>
+</v-app>
 </template>
 
 <script>

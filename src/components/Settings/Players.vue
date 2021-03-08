@@ -165,11 +165,11 @@ export default {
         ...mapState(["players"]),
         validPlayer() {
             return !!(
-                this.newPlayer.name &&
-                this.newPlayer.handle &&
-                this.newPlayer.color &&
-                this.newPlayer.squares &&
-                this.availableSquares - this.newPlayer.squares >= 0
+                this.playerEdits.name &&
+                this.playerEdits.handle &&
+                this.playerEdits.color &&
+                this.playerEdits.squares &&
+                this.availableSquares - this.playerEdits.squares >= 0
             );
         },
         validEditedPlayer() {
@@ -177,10 +177,10 @@ export default {
                 this.playerEdits.name &&
                 this.playerEdits.handle &&
                 this.playerEdits.color &&
-                this.playerEdits.squares &&
+                +this.playerEdits.squares &&
                 this.availableSquares +
                     this.temporarilyUnclaimedSquares -
-                    this.playerEdits.squares >=
+                    +this.playerEdits.squares >=
                     0
             );
         },
@@ -201,13 +201,19 @@ export default {
             }
             this.generateUniqueId();
 
-            this.addPlayerRequest(this.newPlayer);
+            this.addPlayerRequest(this.playerEdits);
 
             this.clearInput();
         },
         save() {
-            console.log('save');
-            this.updatePlayer();
+            console.log('save', this.playerEdits);
+            if (this.playerEdits.id) {
+                this.updatePlayer();
+            } else {
+                this.addPlayer();
+            }
+
+            this.dialog = false;
         },
         updatePlayer() {
             if (!this.validEditedPlayer) {
@@ -215,18 +221,15 @@ export default {
             }
 
             this.updatePlayerRequest(this.playerEdits);
-
-            this.dialog = false;
         },
         deletePlayer(id) {
-            // TODO: confirm delete
             this.deletePlayerRequest(id);
         },
         clearInput() {
-            this.newPlayer.name = "";
-            this.newPlayer.handle = "";
-            this.newPlayer.color = "";
-            this.newPlayer.squares = 0;
+            this.playerEdits.name = "";
+            this.playerEdits.handle = "";
+            this.playerEdits.color = "";
+            this.playerEdits.squares = 0;
         },
         generateThreeDigitNumber() {
             return Math.floor(Math.random() * (999 + 1));
@@ -240,7 +243,7 @@ export default {
                 idNumber = this.generateThreeDigitNumber();
             }
 
-            this.newPlayer.player_id = idNumber;
+            this.playerEdits.player_id = idNumber;
         },
 
         editItem (item) {
@@ -254,8 +257,9 @@ export default {
             this.dialogDelete = true;
         },
 
-        deleteItemConfirm() {
-            this.players.splice(this.editedIndex, 1);
+        async deleteItemConfirm() {
+            let player = this.players[this.editedIndex];
+            await this.deletePlayer(player.id);
             this.closeDelete();
         },
 

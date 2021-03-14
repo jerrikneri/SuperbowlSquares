@@ -186,6 +186,5 @@ export default {
 <style scoped>
 .settings-wrapper {
     background: black;
-    height: 100vh;
 }
 </style>

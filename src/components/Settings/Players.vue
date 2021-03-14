@@ -129,6 +129,11 @@
                 </v-icon>
             </template>
         </v-data-table>
+
+        <v-snackbar v-model="showAlert" :color="isWarning ? 'red' : 'green'">
+            {{ message }}
+        </v-snackbar>
+
     </div>
 </template>
 
@@ -157,6 +162,9 @@ export default {
                 squares: 0,
                 color: "",
             },
+            isWarning: true,
+            message: '',
+            showAlert: false,
             temporarilyUnclaimedSquares: 0,
         };
     },
@@ -195,19 +203,26 @@ export default {
             "updatePlayerRequest",
             "deletePlayerRequest",
         ]),
-        addPlayer() {
+        alert({ message, warning }) {
+            this.message = message;
+            this.isWarning = warning;
+            this.showAlert = true;
+        },
+        async addPlayer() {
             if (!this.validPlayer) {
+                this.alert({ message: 'Not enough squares remaining.', warning: true })
                 return;
             }
             this.generateUniqueId();
 
-            this.addPlayerRequest(this.playerEdits);
+            await this.addPlayerRequest(this.playerEdits);
+
+            this.alert({ message: 'Player added successfully.', warning: false })
 
             this.clearInput();
         },
         save() {
-            console.log('save', this.playerEdits);
-            if (this.playerEdits.id) {
+            if (+this.playerEdits.id !== 0) {
                 this.updatePlayer();
             } else {
                 this.addPlayer();
@@ -215,12 +230,15 @@ export default {
 
             this.dialog = false;
         },
-        updatePlayer() {
+        async updatePlayer() {
             if (!this.validEditedPlayer) {
+                this.alert({ message: 'Not enough squares remaining.', warning: true })
                 return;
             }
 
-            this.updatePlayerRequest(this.playerEdits);
+            await this.updatePlayerRequest(this.playerEdits);
+
+            this.alert({ message: 'Player update successfully.', warning: false })
         },
         deletePlayer(id) {
             this.deletePlayerRequest(id);

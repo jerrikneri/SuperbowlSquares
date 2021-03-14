@@ -58,7 +58,7 @@
 
                         <v-btn class="ml-auto"
                             color="primary"
-                            @click="resetSquares">Reset All Squares</v-btn>
+                            @click="reset">Reset All Squares</v-btn>
                     </v-card-title>
                 </v-card>
 
@@ -109,6 +109,9 @@
             </v-row>
 
         </v-container>
+        <v-snackbar v-model="showAlert" color="green">
+            {{ message }}
+        </v-snackbar>
     </div>
 </template>
 
@@ -120,6 +123,12 @@ import Players from "./Players";
 export default {
     name: "Settings",
     components: { Players },
+    data() {
+        return {
+            message: '',
+            showAlert: false
+        }
+    },
     computed: {
         ...mapGetters(["availableSquares", "allSquaresAssigned"]),
         ...mapState(["settings"]),
@@ -145,13 +154,19 @@ export default {
         setNumbers(value) {
             this.SET_SETTINGS({ field: "numbers", value });
         },
-        save() {
-            this.saveSettings(this.settings);
+        async save() {
+            await this.saveSettings(this.settings);
+
+            this.message = 'Saved!';
+            this.showAlert = true;
         },
-        generateScores() {
+        async generateScores() {
             const home = this.generateHomeScores();
             const away = this.generateAwayScores();
-            this.setScores({ home, away });
+            await this.setScores({ home, away });
+
+            this.message = 'Scores generated!';
+            this.showAlert = true;
         },
         generateHomeScores() {
             return {
@@ -179,6 +194,11 @@ export default {
 
             return numbers;
         },
+        async reset() {
+            await this.resetSquares();
+            this.message = 'Squares reset!';
+            this.showAlert = true;
+        }
     },
 };
 </script>

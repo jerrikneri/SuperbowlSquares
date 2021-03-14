@@ -133,7 +133,6 @@
         <v-snackbar v-model="showAlert" :color="isWarning ? 'red' : 'green'">
             {{ message }}
         </v-snackbar>
-
     </div>
 </template>
 

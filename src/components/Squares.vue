@@ -66,4 +66,8 @@ export default {
     flex-wrap: wrap;
     overflow: scroll;
 }
+
+.wrapper {
+  background: black;
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="text-white">
     <div class="game-information-wrapper text-center" v-if="doneAssigning">
     <h2 class="text-center">{{ away }} - X AXIS</h2>
     <h2 class="text-center">{{ home }} - Y AXIS</h2>
@@ -20,10 +20,17 @@
     <section>
       <h2>Score</h2>
       <div>
-        <label for="away">{{ away }}</label>
-        <input id="away" type="number" v-model="awayScore">
-        <label for="home">{{ home }}</label>
-        <input id="home" type="number" v-model="homeScore">
+        <v-container>
+          <v-row class="input">
+            <v-col cols="6">
+              <v-input :label="away" v-model="awayScore" light />
+            </v-col>
+            <v-col cols="6">
+              <v-input :label="home" v-model="homeScore" light />
+            </v-col>
+          </v-row>
+        </v-container>
+        
       </div>
       <div>
         <button @click="setScore">Submit Score</button>
@@ -104,7 +111,6 @@ export default {
     isAdmin() {
       return this.currentPlayerId === process.env.VUE_APP_ADMIN_ID;
     },
-    
   },
   async created() {
     await Promise.all([
@@ -196,3 +202,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.input {
+  color: white;
+}
+</style>

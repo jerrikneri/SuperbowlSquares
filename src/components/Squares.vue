@@ -15,10 +15,20 @@
                       {{ homeDigits[currentQuarter][squareY] }}
                     </div>
                   <Square :xPosition="squareX" :yPosition="squareY"
-                    :awayScore="awayDigits[currentQuarter][squareX]" :homeScore="homeDigits[currentQuarter][squareY]" />
+                    :awayScore="awayDigits[currentQuarter][squareX]" :homeScore="homeDigits[currentQuarter][squareY]"
+                    @alert="showAlert" />
               </div>
           </div>
       </div>
+
+          <v-snackbar
+      v-model="showSnackbar"
+      :color="snackbarColor"
+      top
+      large
+    >
+      {{ message }}
+    </v-snackbar>
   </div>
 </template>
 
@@ -33,6 +43,9 @@ export default {
   data() {
       return {
           digits: [0,1,2,3,4,5,6,7,8,9],
+          message: '',
+          showSnackbar: false,
+          snackbarColor: 'red'
       }
   },
   computed: {
@@ -42,7 +55,13 @@ export default {
   created() {
     this.fetchScores();
   },
-  methods: mapActions(['fetchScores'])
+  methods: {
+    ...mapActions(['fetchScores']),
+    showAlert(message) {
+      this.message = message;
+      this.showSnackbar = true;
+    }
+  }
 }
 </script>
 

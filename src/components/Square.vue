@@ -77,22 +77,12 @@ export default {
             }
 
             if (!this.readyForAssignment) {
-                return this.$bvToast.toast("You've reached your maximum squares or player is not assigned.", {
-                    title: 'Squares not available',
-                    solid: true,
-                    variant: 'danger',
-                    autoHideDelay: 10000,
-                    noCloseButton: true
-                });
+                this.$emit('alert', "You've reached your maximum squares or player is not assigned.")
+                return;
             }
             if (!this.selected && this.remainingPlayerSquares === 0) {
-                return this.$bvToast.toast("You've reached your maximum squares.", {
-                    title: 'Squares not available',
-                    solid: true,
-                    variant: 'danger',
-                    autoHideDelay: 10000,
-                    noCloseButton: true
-                });
+                this.$emit('alert', "You've reached your maximum squares.");
+                return;
             }
 
             this.selected = !this.selected;

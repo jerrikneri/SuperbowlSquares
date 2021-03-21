@@ -83,7 +83,7 @@ export default {
 
 .squares-wrapper {
     display: grid;
-    grid-gap: 10px;
+    grid-gap: 1px;
     grid-template-columns: auto auto auto auto auto auto auto auto auto auto;
     color: #444;
     flex-wrap: wrap;

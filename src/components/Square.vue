@@ -3,7 +3,7 @@
         :class="{ 'winner': isWinner, 'cursor': !assignedPlayer }"
         :style="getBackground"
         @click="assign">
-        <h1>{{ label }}</h1>
+        <p>{{ label }}</p>
     </div>
 </template>
 
@@ -107,10 +107,10 @@ export default {
     background-color: #444;
     color: #fff;
     border-radius: 5px;
-    padding: 20px;
-    font-size: 150%;
+    padding: 5px;
     margin-bottom: 10px;
-    height: 250px;
+    height: 100px;
+    width: 100px;
     display: flex;
     flex-direction: column;
     justify-content: center;

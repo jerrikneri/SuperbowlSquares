@@ -4,6 +4,9 @@
       Loading...
     </div>
     <div class="text-white" v-else>
+      <v-btn v-show="isAdmin" color="primary" @click="$router.push({ name: 'Settings' })">
+        Settings
+      </v-btn>
     <v-snackbar
       v-model="showSnackbar"
       :color="snackbarColor"
@@ -175,7 +178,7 @@ export default {
     this.setUp();
   },
   methods: {
-    ...mapActions(['fetchPlayers', 'fetchSquares', 'fetchSettings', 'fetchScores', 'submitSquareRequest']),
+    ...mapActions(['fetchPlayers', 'fetchSquares', 'fetchSettings', 'submitSquareRequest']),
     ...mapMutations(['SET_SCORE', 'SET_QUARTER', 'TOGGLE_ACTIVELY_PICKING', 'SET_CURRENT_ACTIVE_PLAYER']),
     clearInput() {
       this.homeScore = 0;
@@ -202,6 +205,10 @@ export default {
       }
     },
     handlePlayerSubmit() {
+      if (this.isAdmin) {
+        this.dialog = false;
+        return
+      }
       if (!this.playerIds.includes(+this.currentPlayerId)) {
         return this.$nextTick(() => {
           this.snackbarColor = 'red';

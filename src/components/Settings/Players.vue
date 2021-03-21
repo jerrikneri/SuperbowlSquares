@@ -267,6 +267,7 @@ export default {
             this.editedIndex = this.players.indexOf(item)
             this.playerEdits = Object.assign({}, item)
             this.dialog = true
+            this.temporarilyUnclaimedSquares = this.playerEdits.squares;
         },
         deleteItem(item) {
             this.editedIndex = this.players.indexOf(item);

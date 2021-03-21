@@ -1,5 +1,20 @@
 <template>
-  <div class="text-white">
+  <div>
+    <div v-if="loading">
+      Loading...
+    </div>
+    <div class="text-white" v-else>
+    <v-snackbar
+      v-model="showSnackbar"
+      :color="snackbarColor"
+      top
+      large
+    >
+      {{ message }}
+    </v-snackbar>
+
+
+
     <div class="game-information-wrapper text-center" v-if="doneAssigning">
     <h2 class="text-center">{{ away }} - X AXIS</h2>
     <h2 class="text-center">{{ home }} - Y AXIS</h2>
@@ -56,21 +71,53 @@
     <div v-else>
       {{ currentPlayer && currentPlayer.name }}, you have {{ remainingPlayerSquares }} left.
 
-      <button v-if="!remainingPlayerSquares" @click="confirmSquares">Confirm Squares</button>
+      <v-btn v-if="!remainingPlayerSquares" @click="confirmSquares" color="success" large>Confirm Squares</v-btn>
     </div>
 
-    <b-modal id="playerIdPrompt"
-        title="What is your player id? ###"
-        @ok="handlePlayerSubmit"
-        ok-only
-        no-close-on-backdrop
-        no-close-on-esc
-        hide-header-close>
-      <input type="number"
-        placeholder="Player ID ###"
-        v-model="currentPlayerId"
-        @keydown.enter="handlePlayerSubmit">
-    </b-modal>
+      <v-dialog
+      v-model="dialog"
+      persistent
+      max-width="600px"
+    >
+      <v-card dark>
+        <v-card-title>
+          <span class="headline">What is your Player ID?</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  label="Player ID*"
+                  required
+                  v-model="currentPlayerId"
+                  @keydown.enter="handlePlayerSubmit"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+          <small>*indicates required field</small>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="dialog = false"
+          >
+            Close
+          </v-btn>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="handlePlayerSubmit"
+          >
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
   </div>
 </template>
 
@@ -81,6 +128,11 @@ export default {
   name: 'GameInformation',
   data() {
     return {
+      loading: false,
+      dialog: false,
+      message: '',
+      showSnackbar: false,
+      snackbarColor: 'green',
       currentPlayerId: 0,
       doneAssigning: false,
       homeScore: 0,
@@ -113,12 +165,13 @@ export default {
     },
   },
   async created() {
+    this.loading = true;
     await Promise.all([
       this.fetchPlayers(),
-      this.fetchScores(),
       this.fetchSquares(),
       this.fetchSettings()
-    ]) 
+    ]);
+    this.loading = false;
     this.setUp();
   },
   methods: {
@@ -143,50 +196,38 @@ export default {
     },
     setUp() {
       if (this.settings.assignments && this.currentPlayerId === 0) {
-        this.$bvModal.show('playerIdPrompt')
+        this.dialog = true;
       } else {
         this.doneAssigning = true;
       }
     },
-    handlePlayerSubmit(bvModalEvent) {
-      bvModalEvent.preventDefault();
+    handlePlayerSubmit() {
       if (!this.playerIds.includes(+this.currentPlayerId)) {
         return this.$nextTick(() => {
-          return this.$bvToast.toast('Invalid player ID', {
-            title: 'Invalid player ID',
-            solid: true,
-            variant: 'danger',
-            autoHideDelay: 10000,
-            noCloseButton: true
-          });
+          this.snackbarColor = 'red';
+          this.message = 'Invalid player ID';
+          this.showSnackbar = true;
+          return;
         });
       }
 
       this.$nextTick(() => {
-        this.$bvToast.toast('Player assigned!', {
-          title: 'Begin picking your squares.',
-          solid: true,
-          variant: 'success',
-          autoHideDelay: 10000,
-          noCloseButton: true
-        });
+        this.snackbarColor = 'green';
+        this.message = 'Player assigned successfully!';
+        this.showSnackbar = true;
 
         this.TOGGLE_ACTIVELY_PICKING();
         this.SET_CURRENT_ACTIVE_PLAYER(
           this.players.find(player => +player.player_id === +this.currentPlayerId)
         );
 
-        if (!+this.availableSquares) {
-          this.$bvToast.toast('You do not have any squares left to assign!', {
-            title: 'You do not have any squares left to assign!',
-            solid: true,
-            variant: 'danger',
-            autoHideDelay: 10000,
-            noCloseButton: true
-          });
-        }
+        // if (!+this.availableSquares) {
+        //   this.snackbarColor = 'red';
+        //   this.message = 'You do not have any squares left to assign!'
+        //   this.showSnackbar = true;
+        // }
 
-        this.$bvModal.hide('playerIdPrompt')
+        this.dialog = false;
       })
     },
     async confirmSquares() {

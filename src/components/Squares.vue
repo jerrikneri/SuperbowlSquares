@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import GameInformation from './GameInformation';
 import Square from './Square';
 
@@ -38,7 +38,11 @@ export default {
   computed: {
     ...mapGetters(['awayDigits', 'homeDigits']),
     ...mapState(['currentQuarter', 'home', 'away', 'settings']),
-  }
+  },
+  created() {
+    this.fetchScores();
+  },
+  methods: mapActions(['fetchScores'])
 }
 </script>
 

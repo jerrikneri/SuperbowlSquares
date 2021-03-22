@@ -7,7 +7,7 @@
       <GameInformation />
 
       <hr>
-      <div class="squares-wrapper" v-if="awayDigits && homeDigits">
+      <div class="squares-wrapper py-10 ml-10" v-if="awayDigits && homeDigits">
           <div v-for="squareX in digits" :key="`${squareX}-x`" class="squares-row">
               <div class="label labelX" v-show="settings.numbers"> {{ awayDigits[currentQuarter][squareX] }}</div>
               <div v-for="squareY in digits" :key="`${squareY}-y`">
@@ -62,7 +62,7 @@ export default {
       this.showSnackbar = true;
 
       window.scrollTo(0,0);
-          }
+    }
   }
 }
 </script>

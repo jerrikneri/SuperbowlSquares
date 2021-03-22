@@ -53,7 +53,7 @@
         
       </div>
 
-      <v-row v-if="scores">
+      <v-row v-if="scores" class="pa-5">
         <v-col cols="6">
           <v-text-field label="1st Quarter" :value="getScoreByQuarter(1)" disabled dark></v-text-field>
         </v-col>

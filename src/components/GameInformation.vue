@@ -35,39 +35,39 @@
       </div>
     </section>
 
-    <section>
+    <section class="py-5">
       <h2>Score</h2>
       <div>
         <v-container>
           <v-row class="input">
             <v-col cols="6">
-              <v-input :label="away" v-model="awayScore" light />
+              <v-text-field :label="away" v-model="awayScore" dark></v-text-field>
             </v-col>
             <v-col cols="6">
-              <v-input :label="home" v-model="homeScore" light />
+              <v-text-field :label="home" v-model="homeScore" dark></v-text-field>
             </v-col>
           </v-row>
+
+        <v-btn @click="setScore">Submit Score</v-btn>
         </v-container>
         
       </div>
-      <div>
-        <button @click="setScore">Submit Score</button>
-      </div>
 
-      <div v-if="scores">
-        <p>
-          1st Quarter: {{ getScoreByQuarter(1) }}
-        </p>
-        <p>
-          2nd Quarter: {{ getScoreByQuarter(2) }}
-        </p>
-        <p>
-          3rd Quarter: {{ getScoreByQuarter(3) }}
-        </p>
-        <p>
-          Final: {{ getScoreByQuarter(4) }}
-        </p>
-      </div>
+      <v-row v-if="scores">
+        <v-col cols="6">
+          <v-text-field label="1st Quarter" :value="getScoreByQuarter(1)" disabled dark></v-text-field>
+        </v-col>
+        <v-col cols="6">
+          <v-text-field label="2nd Quarter" :value="getScoreByQuarter(2)" disabled dark></v-text-field>
+        </v-col>
+        <v-col cols="6">
+          <v-text-field label="3rd Quarter" :value="getScoreByQuarter(3)" disabled dark></v-text-field>
+        </v-col>
+        <v-col cols="6">
+          <v-text-field label="Final" :value="getScoreByQuarter(4)" disabled dark></v-text-field>
+        </v-col>
+      </v-row>
+
     </section>
     </div>
 
@@ -171,8 +171,8 @@ export default {
     this.setUp();
   },
   methods: {
-    ...mapActions(['fetchPlayers', 'fetchSquares', 'fetchSettings', 'submitSquareRequest']),
-    ...mapMutations(['SET_SCORE', 'SET_QUARTER', 'TOGGLE_ACTIVELY_PICKING', 'SET_CURRENT_ACTIVE_PLAYER']),
+    ...mapActions(['fetchPlayers', 'fetchSquares', 'fetchSettings', 'submitSquareRequest', 'setScoreRequest']),
+    ...mapMutations(['SET_QUARTER', 'TOGGLE_ACTIVELY_PICKING', 'SET_CURRENT_ACTIVE_PLAYER']),
     clearInput() {
       this.homeScore = 0;
       this.awayScore = 0;
@@ -180,13 +180,13 @@ export default {
     getScoreByQuarter(quarter) {
       let score = this.scores.find(score => +score.quarter === +quarter);
       if (!score) return '';
-      return `${this.home}: ${score.home}, ${this.away}: ${score.away}`;
+      return `${this.home}: ${score.home || ''}, ${this.away}: ${score.away || ''}`;
     },
     setQuarter(quarter) {
       this.SET_QUARTER(quarter);
     },
     setScore() {
-      this.SET_SCORE({ quarter: this.currentQuarter, home: this.homeScore, away: this.awayScore});
+      this.setScoreRequest({ quarter: this.currentQuarter, home: this.homeScore, away: this.awayScore});
 
       this.clearInput();
     },

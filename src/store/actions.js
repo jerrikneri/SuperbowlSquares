@@ -32,6 +32,11 @@ export default {
 
         commit('SET_SCORES', data);
     },
+    async setScoreRequest({ commit }, scores) {
+        await axios.patch('scores', scores);
+
+        commit('SET_SCORE', scores);
+    },
 
 
     async submitSquareRequest({ commit }, { squares, player_id }) {

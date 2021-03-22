@@ -20,18 +20,25 @@ export default {
         state.players = players;
     },
     SET_SCORE(state, { quarter, home, away }) {
-        let existingScoreIndex = state.scores.findIndex(score => +score.quarter === +quarter);
+        let existingScore = state.scores.find(score => +score.quarter === +quarter);
 
-        if (existingScoreIndex !== -1) {
-            return state.scores[existingScoreIndex] = { quarter, home, away };
+        if (existingScore) {
+            existingScore.away = away;
+            existingScore.home = home;
+            return
         }
 
         state.scores.push({ quarter, home, away });
     },
 
-    SET_SCORES(state, { home, away }) {
+    SET_SCORES(state, { home, away, homeScore, awayScore }) {
         state.homeDigits = home;
         state.awayDigits = away;
+
+        state.scores.push({ quarter: 1, home: homeScore.first_quarter, away: awayScore.first_quarter });
+        state.scores.push({ quarter: 2, home: homeScore.second_quarter, away: awayScore.second_quarter });
+        state.scores.push({ quarter: 3, home: homeScore.third_quarter, away: awayScore.third_quarter });
+        state.scores.push({ quarter: 4, home: homeScore.fourth_quarter, away: awayScore.fourth_quarter });
     },
 
     SET_SQUARES(state, squares) {

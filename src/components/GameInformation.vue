@@ -129,7 +129,7 @@ export default {
       message: '',
       showSnackbar: false,
       snackbarColor: 'green',
-      currentPlayerId: 0,
+      currentPlayerId: '',
       doneAssigning: false,
       homeScore: 0,
       awayScore: 0,
@@ -191,7 +191,7 @@ export default {
       this.clearInput();
     },
     setUp() {
-      if (this.settings.assignments && this.currentPlayerId === 0) {
+      if (this.settings.assignments && this.currentPlayerId === '') {
         this.dialog = true;
       } else {
         this.doneAssigning = true;

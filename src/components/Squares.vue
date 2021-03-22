@@ -60,7 +60,9 @@ export default {
     showAlert(message) {
       this.message = message;
       this.showSnackbar = true;
-    }
+
+      window.scrollTo(0,0);
+          }
   }
 }
 </script>
